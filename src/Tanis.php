@@ -1,6 +1,6 @@
 <?php
 
-namespace Avlas\Tanis;
+namespace Avlas99\Tanis;
 
 class Tanis
 {
