@@ -1,6 +1,6 @@
 # Tanis
 
-Log Analyzer.
+A PHP package for log handling and reporting.
 
 ## Installation
 

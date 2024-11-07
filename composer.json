@@ -1,6 +1,6 @@
 {
     "name": "avlas/tanis",
-    "description": "Log analyzer",
+    "description": "A PHP package for log handling and reporting.",
     "type": "library",
     "license": "MIT",
     "autoload": {
