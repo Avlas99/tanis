@@ -47,8 +47,13 @@ return [
     ],
 
     'max_emails_per_minute' => 1,
-
     'max_emails_per_hour' => 60,
-
     'max_emails_per_day' => 24,
+
+    'smtp_host' => 'smtp.example.com',
+    'smtp_user' => 'your_smtp_username',
+    'smtp_password' => 'your_smtp_password',
+    'smtp_port' => 587,
+    'from_email' => 'noreply@example.com',
+    'from_name' => 'Your App Name',
 ];

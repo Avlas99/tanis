@@ -2,6 +2,9 @@
 
 namespace Avlas99\Tanis;
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class Tanis
 {
     private static $logDate = "";
@@ -34,7 +37,7 @@ class Tanis
     }
 
     private static function config() : array { 
-        $configPath = __DIR__ . '../config.php';
+        $configPath = __DIR__ . '/../config.php';
 
         if (!file_exists($configPath)) {
             throw new \RuntimeException("Configuration file not found: $configPath");
@@ -316,24 +319,39 @@ class Tanis
 
     private static function sendEmail(array $email, array $users, string $subject){
         foreach($users as $user){
-            try{
+            try {
                 if (!filter_var($user, FILTER_VALIDATE_EMAIL)) {
                     throw new \InvalidArgumentException("Invalid user email: $user");
                 }
-
+    
                 if (!self::canSendEmail($user)) {
                     throw new \RuntimeException("Email sending limit reached for: $user");
                 }
-
-                if (!mail($user, $subject, $email['message'], $email['headers'])) {
-                    throw new \Exception("Failed to send email to: $user");
-                }
-
+    
+                $mail = new PHPMailer(true);
+    
+                $mail->isSMTP();
+                $mail->Host = self::config()['smtp_host'];
+                $mail->SMTPAuth = true;
+                $mail->Username = self::config()['smtp_user'];
+                $mail->Password = self::config()['smtp_password'];
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = self::config()['smtp_port'];
+    
+                $mail->setFrom(self::config()['from_email'], self::config()['from_name']);
+                $mail->addAddress($user);
+    
+                $mail->isHTML(true);
+                $mail->Subject = $subject;
+                $mail->Body    = $email['message'];
+                $mail->AltBody = strip_tags($email['message']);
+    
+                $mail->send();
                 self::logEmailSent($user);
-
-            }catch(Exception $e){
-                error_log("Error in sendEmail: " . $e->getMessage());
-                echo 'Error sending email. Please check error log.';
+    
+            } catch (Exception $e) {
+                error_log("Error while sending email: {$mail->ErrorInfo}");
+                echo 'Error while sending email, check error log.';
             }
         }
     }
